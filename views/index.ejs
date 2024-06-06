@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiiCode CDN</title>
+</head>
+<body>
+    <h1>KiiCode Uploader</h1>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" name="file" accept=".png,.jpg,.jpeg,.webp,.mp3,.mp4" required>
+        <button type="submit">Upload</button>
+    </form>
+    <p id="uploadResult"></p>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+
+                const result = await response.json();
+                document.getElementById('uploadResult').textContent = `File uploaded successfully: ${result.url}`;
+            } catch (error) {
+                document.getElementById('uploadResult').textContent = error.message;
+            }
+        });
+    </script>
+</body>
+</html>
